@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<package format="2">
+	<name>dr_log</name>
+	<version>1.0.0</version>
+	<description>Common log4cxx configuration for Delft Robotics packages.</description>
+	<license>Apache v2.0</license>
+
+	<maintainer email="maarten@de-vri.es">Maarten de Vries</maintainer>
+	<author email="maarten@de-vri.es">Maarten de Vries</author>
+
+	<buildtool_depend>catkin</buildtool_depend>
+	<build_depend>dr_cmake</build_depend>
+	<depend>rosconsole</depend>
+	<depend>roscpp</depend>
+
+	<export>
+	</export>
+</package>
