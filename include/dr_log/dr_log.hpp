@@ -1,14 +1,23 @@
+#define BOOST_LOG_USE_NATIVE_SYSLOG
+#define BOOST_LOG_DYN_LINK
+
 #include <string>
+#include <boost/log/common.hpp>
+#include <boost/log/sources/logger.hpp>
 
 namespace dr {
 
-/// Remove the default ROS appenders.
-void removeRosAppenders();
+/// Available log levels.
+enum class LogLevel {
+	debug = 0,
+	info,
+	success,
+	warning,
+	error,
+	critical,
+};
 
-/// Add the default Delft Robotics appenders for log4cxx.
-void addDefaultAppenders(std::string const & base_dir);
-
-/// Remove the default ROS appenders and set the appenders to the default Delft Robotics appenders.
-void replaceDefaultAppenders(std::string const & base_dir);
+// Initialize the logging library.
+void setupLogging(std::string const & base_dir, std::string const & name);
 
 }

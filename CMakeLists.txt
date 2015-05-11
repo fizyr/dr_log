@@ -3,25 +3,29 @@ project(dr_log)
 
 find_package(catkin REQUIRED COMPONENTS
 	dr_cmake
-	roscpp
-	rosconsole
 )
 
+find_package(Boost REQUIRED COMPONENTS log log_setup system date_time)
+
 catkin_package(
-	INCLUDE_DIRS include
-	LIBRARIES ${PROJECT_NAME}
+	INCLUDE_DIRS include ${Boost_INCLUDE_DIRS}
+	LIBRARIES ${PROJECT_NAME} ${Boost_LIBRARIES}
 )
 
 dr_include_directories(
 	include/${PROJECT_NAME}
 	${catkin_INCLUDE_DIRS}
+	${Boost_INCLUDE_DIRS}
 )
 
 add_library(${PROJECT_NAME}
 	src/dr_log.cpp
 )
 
-target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES})
+add_executable(${PROJECT_NAME}_test src/test.cpp)
+
+target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${Boost_LIBRARIES})
+target_link_libraries(${PROJECT_NAME}_test ${PROJECT_NAME})
 
 install(TARGETS ${PROJECT_NAME}
 	ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
