@@ -112,17 +112,8 @@ std::ostream & operator<< (std::ostream & stream, LogLevel level) {
 }
 
 
-void setupLogging(std::string const & base_dir, std::string const & name) {
+void setupLogging(std::string const & log_file, std::string const & name) {
 	log::core_ptr core = log::core::get();
-
-	// Get base and node directories.
-	boost::filesystem::path base = base_dir;
-	boost::filesystem::path node = base / name;
-
-	// Create directories if needed.
-	boost::system::error_code error;
-	boost::filesystem::create_directories(base, error);
-	boost::filesystem::create_directories(node, error);
 
 	// Add common attributes.
 	log::add_common_attributes();
@@ -135,13 +126,6 @@ void setupLogging(std::string const & base_dir, std::string const & name) {
 		<< "[" << log::expressions::attr<std::string>("Node") << "] "
 		<< log::expressions::message;
 
-	// Add file sink.
-	log::add_file_log(
-		keywords::file_name = (node / (name + ".log")).native(),
-		keywords::open_mode = std::ios_base::out | std::ios_base::app,
-		keywords::format    = text_format
-	);
-
 	// Add console sink.
 	log::add_console_log(std::clog)->set_formatter(makeAnsiColorFormatter(text_format));
 
@@ -153,6 +137,19 @@ void setupLogging(std::string const & base_dir, std::string const & name) {
 
 	syslog->set_severity_mapper(severityMapping());
 	core->add_sink(boost::make_shared<log::sinks::synchronous_sink<log::sinks::syslog_backend>>(syslog));
+
+	Logger logger;
+
+	// Add file sink.
+	try {
+		log::add_file_log(
+			keywords::file_name = log_file,
+			keywords::open_mode = std::ios_base::out | std::ios_base::app,
+			keywords::format    = text_format
+		);
+	} catch (boost::filesystem::filesystem_error const & e) {
+		BOOST_LOG_SEV(logger, LogLevel::error) << "Failed to create log file `" << log_file << "': " << e.what();
+	}
 }
 
 }

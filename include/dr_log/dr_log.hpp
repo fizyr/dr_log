@@ -20,6 +20,6 @@ enum class LogLevel {
 using Logger = boost::log::sources::severity_logger<LogLevel>;
 
 // Initialize the logging library.
-void setupLogging(std::string const & base_dir, std::string const & name);
+void setupLogging(std::string const & log_file, std::string const & name);
 
 }

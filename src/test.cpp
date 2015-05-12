@@ -1,7 +1,7 @@
 #include "dr_log.hpp"
 
 int main() {
-	dr::setupLogging("./", "test");
+	dr::setupLogging("./test/test.log", "test");
 	boost::log::sources::severity_logger<dr::LogLevel> logger;
 	BOOST_LOG_SEV(logger, dr::LogLevel::debug)    << "Debug";
 	BOOST_LOG_SEV(logger, dr::LogLevel::info)     << "Info";
