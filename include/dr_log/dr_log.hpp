@@ -3,7 +3,7 @@
 
 #include <string>
 #include <boost/log/common.hpp>
-#include <boost/log/sources/logger.hpp>
+#include <boost/log/sources/severity_logger.hpp>
 
 namespace dr {
 
@@ -16,6 +16,8 @@ enum class LogLevel {
 	error,
 	critical,
 };
+
+using Logger = boost::log::sources::severity_logger<LogLevel>;
 
 // Initialize the logging library.
 void setupLogging(std::string const & base_dir, std::string const & name);
