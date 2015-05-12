@@ -40,21 +40,34 @@ namespace {
 			LogLevel severity = record["Severity"].extract_or_default<LogLevel, void, LogLevel>(LogLevel::info);
 
 			// Add color code.
-			if (severity >= LogLevel::error) {
-				stream << "\x1b[31m";
-			} else if (severity >= LogLevel::warning) {
-				stream << "\x1b[33m";
-			} else if (severity == LogLevel::success) {
-				stream << "\x1b[32m";
-			} else {
-				stream << "\x1b[39m";
+			switch (severity) {
+				case LogLevel::debug:
+					stream << "\x1b[1;30m";
+					break;
+				case LogLevel::info:
+					stream << "\x1b[0m";
+					break;
+				case LogLevel::success:
+					stream << "\x1b[32m";
+					break;
+				case LogLevel::warning:
+					stream << "\x1b[33m";
+					break;
+				case LogLevel::error:
+					stream << "\x1b[31m";
+					break;
+				case LogLevel::critical:
+					stream << "\x1b[1;31m";
+					break;
+				default:
+					break;
 			}
 
 			// Invoke slave.
 			slave(record, stream);
 
 			// Reset color.
-			stream << "\x1b[39m";
+			stream << "\x1b[0m";
 		}
 
 	};
