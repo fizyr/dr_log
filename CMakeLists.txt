@@ -6,6 +6,7 @@ find_package(catkin REQUIRED COMPONENTS
 )
 
 find_package(Boost REQUIRED COMPONENTS log log_setup system date_time)
+find_package(PThread REQUIRED)
 
 catkin_package(
 	INCLUDE_DIRS include ${Boost_INCLUDE_DIRS}
@@ -24,8 +25,11 @@ add_library(${PROJECT_NAME}
 
 add_executable(${PROJECT_NAME}_test src/test.cpp)
 
-target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${Boost_LIBRARIES})
-target_link_libraries(${PROJECT_NAME}_test ${PROJECT_NAME})
+target_compile_options(${PROJECT_NAME}      PUBLIC ${PThread_COMPILE_OPTIONS})
+target_compile_options(${PROJECT_NAME}_test PUBLIC ${PThread_COMPILE_OPTIONS})
+
+target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${Boost_LIBRARIES} ${PThread_LIBRARIES})
+target_link_libraries(${PROJECT_NAME}_test ${PROJECT_NAME} ${PThread_LIBRARIES})
 
 install(TARGETS ${PROJECT_NAME}
 	ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
