@@ -24,15 +24,6 @@ namespace {
 	namespace log      = boost::log;
 	namespace keywords = boost::log::keywords;
 
-	boost::shared_ptr<log::sinks::sink> file_sink = nullptr;
-
-	void fileSinkExceptionHandler(std::exception const & e) {
-		log::core_ptr core = log::core::get();
-		core->remove_sink(file_sink);
-		file_sink = nullptr;
-		DR_ERROR("Error writing log file: " << e.what());
-	}
-
 	/// Formatter that invokes a slave formatter and adds ANSI color codes based on log severity.
 	template<typename Slave>
 	class AnsiColorFormatter {
