@@ -2,10 +2,10 @@
 
 int main() {
 	dr::setupLogging("./test/test.log", "test");
-	DR_DEBUG("Debug");
-	DR_INFO("Info");
-	DR_SUCCESS("Succes");
-	DR_WARN("Warning");
-	DR_ERROR("Error");
-	DR_CRITICAL("Critical");
+	DR_DEBUG("Debug" << " message");
+	DR_INFO("Info" << " message");
+	DR_SUCCESS("Succes" << " message");
+	DR_WARN("Warning" << " message");
+	DR_ERROR("Error" << " message");
+	DR_CRITICAL("Critical" << " message");
 }
