@@ -1,3 +1,4 @@
+#pragma once
 #define BOOST_LOG_USE_NATIVE_SYSLOG
 #define BOOST_LOG_DYN_LINK
 
