@@ -164,10 +164,10 @@ namespace {
 		try {
 			auto file_frontend = boost::make_shared<log::sinks::synchronous_sink<log::sinks::text_file_backend>>(
 				keywords::file_name = filename,
-				keywords::open_mode = std::ios_base::out | std::ios_base::app,
-				keywords::format    = text_format
+				keywords::open_mode = std::ios_base::out | std::ios_base::app
 			);
 
+			file_frontend->set_formatter(text_format);
 
 			auto weak = sharedToWeak(file_frontend);
 			auto exception_handler = [filename, weak] (std::exception const & e) {
