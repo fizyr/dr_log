@@ -24,6 +24,18 @@ namespace {
 	namespace log      = boost::log;
 	namespace keywords = boost::log::keywords;
 
+	/// Convert a boost shared pointer to a weak pointer.
+	template<typename T>
+	boost::weak_ptr<T> sharedToWeak(boost::shared_ptr<T> const & shared) {
+		return boost::weak_ptr<T>(shared);
+	}
+
+	/// Convert a boost weak pointer to a shared pointer.
+	template<typename T>
+	boost::shared_ptr<T> weakToShared(boost::weak_ptr<T> const & shared) {
+		return boost::shared_ptr<T>(shared);
+	}
+
 
 	/// Tag for formatting severyity level in log output.
 	struct LevelTag;
@@ -133,7 +145,7 @@ namespace {
 		return frontend;
 	}
 
-	// Create a file sink that removes itself on exceptions and then logs the exception.
+	// Create a syslog sink.
 	boost::shared_ptr<log::sinks::synchronous_sink<log::sinks::syslog_backend>> createSyslogSink() {
 		// Add syslog sink.
 		auto syslog = boost::make_shared<log::sinks::syslog_backend>(
@@ -145,7 +157,6 @@ namespace {
 		return boost::make_shared<log::sinks::synchronous_sink<log::sinks::syslog_backend>>(syslog);
 	}
 
-	// Create a syslog sink.
 
 	// Create a file sink that removes itself on exceptions and then logs the exception.
 	boost::shared_ptr<log::sinks::synchronous_sink<log::sinks::text_file_backend>> createFileSink(std::string const & filename) {
@@ -157,9 +168,11 @@ namespace {
 				keywords::format    = text_format
 			);
 
-			auto exception_handler = [filename, file_frontend] (std::exception const & e) {
+
+			auto weak = sharedToWeak(file_frontend);
+			auto exception_handler = [filename, weak] (std::exception const & e) {
 				log::core_ptr core = log::core::get();
-				log::core::get()->remove_sink(file_frontend);
+				log::core::get()->remove_sink(weakToShared(weak));
 				DR_ERROR("Error writing log file: `" << filename << "' " << e.what());
 			};
 
