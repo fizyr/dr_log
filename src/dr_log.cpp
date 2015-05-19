@@ -24,6 +24,31 @@ namespace {
 	namespace log      = boost::log;
 	namespace keywords = boost::log::keywords;
 
+
+	/// Tag for formatting severyity level in log output.
+	struct LevelTag;
+
+	/// Format a severity level for log output.
+	boost::log::formatting_ostream & operator<< (boost::log::formatting_ostream & stream,  log::to_log_manip<LogLevel, LevelTag> const & level) {
+		static char const * strings[] = {
+			"DEBUG",
+			"INFO",
+			"SUCCESS",
+			"WARN",
+			"ERROR",
+			"FATAL",
+		};
+
+		std::size_t numeric = int(level.get());
+		if (numeric < sizeof(strings) / sizeof(strings[0])) {
+			stream << strings[numeric];
+		} else {
+			stream << "UNKNOWN";
+		}
+
+		return stream;
+	}
+
 	/// Formatter that invokes a slave formatter and adds ANSI color codes based on log severity.
 	template<typename Slave>
 	class AnsiColorFormatter {
@@ -58,7 +83,7 @@ namespace {
 				case LogLevel::error:
 					stream << "\x1b[31m";
 					break;
-				case LogLevel::critical:
+				case LogLevel::fatal:
 					stream << "\x1b[1;31m";
 					break;
 				default:
@@ -88,14 +113,14 @@ namespace {
 		mapping[LogLevel::success]  = log::sinks::syslog::info;
 		mapping[LogLevel::warning]  = log::sinks::syslog::warning;
 		mapping[LogLevel::error]    = log::sinks::syslog::error;
-		mapping[LogLevel::critical] = log::sinks::syslog::critical;
+		mapping[LogLevel::fatal]    = log::sinks::syslog::critical;
 		return mapping;
 	};
 
 	// Text format for file and console log.
 	auto text_format = log::expressions::stream
 		<< "[" << log::expressions::format_date_time<boost::posix_time::ptime>("TimeStamp", "%Y-%m-%d %H:%M:%S.%f") << "] "
-		<< "[" << std::setw(8) << std::left << log::expressions::attr<LogLevel>("Severity") << "] "
+		<< "[" << std::setw(7) << std::left << log::expressions::attr<LogLevel, LevelTag>("Severity") << "] "
 		<< "[" << log::expressions::attr<std::string>("Node") << "] "
 		<< log::expressions::message;
 
@@ -155,7 +180,7 @@ std::ostream & operator<< (std::ostream & stream, LogLevel level) {
 		"success",
 		"warning",
 		"error",
-		"critical",
+		"fatal",
 	};
 
 	std::size_t numeric = int(level);
