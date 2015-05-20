@@ -45,7 +45,7 @@ namespace {
 		static char const * strings[] = {
 			"DEBUG",
 			"INFO",
-			"SUCCESS",
+			"GOOD",
 			"WARN",
 			"ERROR",
 			"FATAL",
@@ -55,7 +55,7 @@ namespace {
 		if (numeric < sizeof(strings) / sizeof(strings[0])) {
 			stream << strings[numeric];
 		} else {
-			stream << "UNKNOWN";
+			stream << "?????";
 		}
 
 		return stream;
@@ -132,7 +132,7 @@ namespace {
 	// Text format for file and console log.
 	auto text_format = log::expressions::stream
 		<< "[" << log::expressions::format_date_time<boost::posix_time::ptime>("TimeStamp", "%Y-%m-%d %H:%M:%S.%f") << "] "
-		<< "[" << std::setw(7) << std::left << log::expressions::attr<LogLevel, LevelTag>("Severity") << "] "
+		<< "[" << std::setw(5) << std::right << log::expressions::attr<LogLevel, LevelTag>("Severity") << "] "
 		<< "[" << log::expressions::attr<std::string>("Node") << "] "
 		<< log::expressions::message;
 
