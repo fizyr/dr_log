@@ -1,9 +1,7 @@
-#include <utility>
-#include <type_traits>
-#include <iomanip>
-
 #include "dr_log.hpp"
 
+#include <boost/date_time/posix_time/posix_time_types.hpp>
+#include <boost/filesystem.hpp>
 #include <boost/log/core.hpp>
 #include <boost/log/expressions.hpp>
 #include <boost/log/sinks.hpp>
@@ -12,9 +10,10 @@
 #include <boost/log/support/date_time.hpp>
 #include <boost/log/utility/exception_handler.hpp>
 #include <boost/log/attributes/value_extraction.hpp>
-#include <boost/date_time/posix_time/posix_time_types.hpp>
 
-#include <boost/filesystem.hpp>
+#include <utility>
+#include <type_traits>
+#include <iomanip>
 
 namespace dr {
 
@@ -36,6 +35,9 @@ namespace {
 		return boost::shared_ptr<T>(shared);
 	}
 
+	struct NullDeleter {
+		void operator() (void const *) const {}
+	};
 
 	/// Tag for formatting severyity level in log output.
 	struct LevelTag;
@@ -76,7 +78,7 @@ namespace {
 
 		/// Format the record.
 		void operator() (log::record_view const & record, log::basic_formatting_ostream<char> & stream) {
-			LogLevel severity = record["Severity"].extract_or_default<LogLevel, void, LogLevel>(LogLevel::info);
+			LogLevel severity = log::extract_or_default<LogLevel>("Severity", record, LogLevel::info);
 
 			// Add color code.
 			switch (severity) {
@@ -139,7 +141,7 @@ namespace {
 	// Create a console sink.
 	boost::shared_ptr<log::sinks::synchronous_sink<log::sinks::basic_text_ostream_backend<char>>> createConsoleSink() {
 		auto backend = boost::make_shared<log::sinks::text_ostream_backend>();
-		backend->add_stream(boost::shared_ptr<std::ostream>(&std::clog, boost::null_deleter()));
+		backend->add_stream(boost::shared_ptr<std::ostream>(&std::clog, NullDeleter()));
 		auto frontend = boost::make_shared<log::sinks::synchronous_sink<log::sinks::text_ostream_backend>>(backend);
 		frontend->set_formatter(makeAnsiColorFormatter(text_format));
 		return frontend;
