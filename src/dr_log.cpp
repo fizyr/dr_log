@@ -45,19 +45,19 @@ namespace {
 	/// Format a severity level for log output.
 	boost::log::formatting_ostream & operator<< (boost::log::formatting_ostream & stream,  log::to_log_manip<LogLevel, LevelTag> const & level) {
 		static char const * strings[] = {
-			"DEBUG",
-			"INFO",
-			"GOOD",
-			"WARN",
-			"ERROR",
-			"FATAL",
+			"D",
+			"I",
+			"S",
+			"W",
+			"E",
+			"F",
 		};
 
 		std::size_t numeric = int(level.get());
 		if (numeric < sizeof(strings) / sizeof(strings[0])) {
 			stream << strings[numeric];
 		} else {
-			stream << "?????";
+			stream << "?";
 		}
 
 		return stream;
@@ -134,7 +134,7 @@ namespace {
 	// Text format for file and console log.
 	auto text_format = log::expressions::stream
 		<< "[" << log::expressions::format_date_time<boost::posix_time::ptime>("TimeStamp", "%Y-%m-%d %H:%M:%S.%f") << "] "
-		<< "[" << std::setw(5) << std::right << log::expressions::attr<LogLevel, LevelTag>("Severity") << "] "
+		<< "[" << log::expressions::attr<LogLevel, LevelTag>("Severity") << "] "
 		<< "[" << log::expressions::attr<std::string>("Node") << "] "
 		<< log::expressions::message;
 
