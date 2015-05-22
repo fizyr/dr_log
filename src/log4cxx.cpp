@@ -1,3 +1,4 @@
+#include "log4cxx.hpp"
 #include "dr_log.hpp"
 
 #include <log4cxx/appenderskeleton.h>

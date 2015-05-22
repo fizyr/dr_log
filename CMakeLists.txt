@@ -23,7 +23,7 @@ dr_include_directories(
 
 add_library(${PROJECT_NAME}
 	src/dr_log.cpp
-	src/log4cxx_integration.cpp
+	src/log4cxx.cpp
 )
 
 add_executable(${PROJECT_NAME}_test src/test.cpp)
