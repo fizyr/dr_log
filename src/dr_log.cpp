@@ -14,6 +14,7 @@
 #include <utility>
 #include <type_traits>
 #include <iomanip>
+#include <atomic>
 
 namespace dr {
 
@@ -22,6 +23,9 @@ BOOST_LOG_GLOBAL_LOGGER_DEFAULT(dr_logger, Logger);
 namespace {
 	namespace log      = boost::log;
 	namespace keywords = boost::log::keywords;
+
+	// Flag to remember if logging has been initialized already.
+	std::atomic_flag logging_initialized = ATOMIC_FLAG_INIT;
 
 	/// Convert a boost shared pointer to a weak pointer.
 	template<typename T>
@@ -209,6 +213,11 @@ std::ostream & operator<< (std::ostream & stream, LogLevel level) {
 }
 
 void setupLogging(std::string const & log_file, std::string const & name) {
+	if (logging_initialized.test_and_set()) {
+		DR_ERROR("dr::setupLogging() called while logging has already been initialized.");
+		return;
+	}
+
 	log::core_ptr core = log::core::get();
 
 	// Add common attributes.
