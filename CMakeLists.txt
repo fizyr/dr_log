@@ -6,6 +6,7 @@ find_package(catkin REQUIRED COMPONENTS
 )
 
 find_package(Boost REQUIRED COMPONENTS log log_setup system date_time)
+find_package(log4cxx REQUIRED)
 find_package(PThread REQUIRED)
 
 catkin_package(
@@ -17,10 +18,12 @@ dr_include_directories(
 	include/${PROJECT_NAME}
 	${catkin_INCLUDE_DIRS}
 	${Boost_INCLUDE_DIRS}
+	${log4cxx_INCLUDE_DIRS}
 )
 
 add_library(${PROJECT_NAME}
 	src/dr_log.cpp
+	src/log4cxx_integration.cpp
 )
 
 add_executable(${PROJECT_NAME}_test src/test.cpp)
@@ -28,7 +31,7 @@ add_executable(${PROJECT_NAME}_test src/test.cpp)
 target_compile_options(${PROJECT_NAME}      PUBLIC ${PThread_COMPILE_OPTIONS})
 target_compile_options(${PROJECT_NAME}_test PUBLIC ${PThread_COMPILE_OPTIONS})
 
-target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${Boost_LIBRARIES} ${PThread_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${Boost_LIBRARIES} ${PThread_LIBRARIES} ${log4cxx_LIBRARIES})
 target_link_libraries(${PROJECT_NAME}_test ${PROJECT_NAME} ${PThread_LIBRARIES})
 
 install(TARGETS ${PROJECT_NAME}

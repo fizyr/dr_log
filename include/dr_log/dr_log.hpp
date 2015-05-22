@@ -28,7 +28,10 @@ using Logger = boost::log::sources::severity_logger_mt<LogLevel>;
 
 BOOST_LOG_GLOBAL_LOGGER(dr_logger, Logger);
 
-#define DR_LOG(severity, msg) BOOST_LOG_SEV(::dr::dr_logger::get(), severity) << msg;
+#define DR_LOG_AT(severity, file, line, msg) BOOST_LOG_SEV(::dr::dr_logger::get(), severity) << msg;
+
+#define DR_LOG(severity, msg) DR_LOG_AT(severity, __FILE__, __LINE__, msg);
+
 #define DR_LOG_THROTTLE(severity, rate, msg) do { \
 	static ::std::chrono::steady_clock::time_point _dr_log__last; \
 	auto _dr_log__now   = ::std::chrono::steady_clock::now(); \
@@ -58,5 +61,7 @@ BOOST_LOG_GLOBAL_LOGGER(dr_logger, Logger);
 
 // Initialize the logging library.
 void setupLogging(std::string const & log_file, std::string const & name);
+
+void registerLog4cxxAppenders();
 
 }

@@ -219,6 +219,9 @@ void setupLogging(std::string const & log_file, std::string const & name) {
 	core->add_sink(createConsoleSink());
 	core->add_sink(createSyslogSink());
 	core->add_sink(createFileSink(log_file));
+
+	// Capture log4cxx output too.
+	registerLog4cxxAppenders();
 }
 
 }
