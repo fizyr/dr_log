@@ -5,7 +5,7 @@ find_package(catkin REQUIRED COMPONENTS
 	dr_cmake
 )
 
-find_package(Boost REQUIRED COMPONENTS log log_setup system date_time)
+find_package(Boost REQUIRED COMPONENTS log log_setup system date_time thread)
 find_package(log4cxx REQUIRED)
 find_package(PThread REQUIRED)
 
