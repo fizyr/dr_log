@@ -33,11 +33,11 @@ BOOST_LOG_GLOBAL_LOGGER(dr_logger, Logger);
 #define DR_LOG(severity, msg) DR_LOG_AT(severity, __FILE__, __LINE__, msg);
 
 #define DR_LOG_THROTTLE(severity, rate, msg) do { \
-	static ::std::chrono::steady_clock::time_point _dr_log__last; \
-	auto _dr_log__now   = ::std::chrono::steady_clock::now(); \
-	auto _dr_log__delay = ::std::chrono::microseconds(1000000/ rate); \
-	if (_dr_log__now - _dr_log__last < _dr_log__delay) break; \
-	_dr_log__last = _dr_log__now; \
+	static ::std::chrono::steady_clock::time_point _dr_log_last; \
+	auto _dr_log_now   = ::std::chrono::steady_clock::now(); \
+	auto _dr_log_delay = ::std::chrono::microseconds(rate * 1000 * 1000); \
+	if (_dr_log_now - _dr_log_last < _dr_log_delay) break; \
+	_dr_log_last = _dr_log_now; \
 	DR_LOG(severity, msg); \
 } while(false)
 
