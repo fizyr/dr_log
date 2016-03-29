@@ -1,5 +1,4 @@
 #include "dr_log.hpp"
-#include "log4cxx.hpp"
 
 #include <boost/date_time/posix_time/posix_time_types.hpp>
 #include <boost/filesystem.hpp>
@@ -228,7 +227,7 @@ void setupLogging(std::string const & log_file, std::string const & name) {
 	// Add  sinks.
 	core->add_sink(createConsoleSink());
 	core->add_sink(createSyslogSink());
-	core->add_sink(createFileSink(log_file));
+	if (!log_file.empty()) core->add_sink(createFileSink(log_file));
 
 	// Capture log4cxx output too.
 	registerLog4cxxAppenders();

@@ -59,8 +59,11 @@ BOOST_LOG_GLOBAL_LOGGER(dr_logger, Logger);
 #define DR_ASSERT(cond)  do { if (cond) break; DR_FATAL("ASSERTION FAILED\n\tfile = " DR_STRINGIFY(__FILE__) " \n\tline = " DR_STRINGIFY(__LINE__) "\n\tcond = " #cond"\n"); assert(false); } while (0)
 
 
-// Initialize the logging library.
-void setupLogging(std::string const & log_file, std::string const & name);
+/// Initialize the logging library.
+void setupLogging(
+	std::string const & log_file, ///< The file to save to, or an empty string to log only to standard error.
+	std::string const & name      ///< The name of the program or node for logging purposes.
+);
 
 void registerLog4cxxAppenders();
 
