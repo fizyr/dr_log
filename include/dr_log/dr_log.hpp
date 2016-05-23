@@ -26,7 +26,7 @@ std::ostream & operator<< (std::ostream & stream, LogLevel level);
 
 using Logger = boost::log::sources::severity_logger_mt<LogLevel>;
 
-BOOST_LOG_GLOBAL_LOGGER(dr_logger, Logger);
+BOOST_LOG_GLOBAL_LOGGER(dr_logger, Logger)
 
 #define DR_LOG_AT(severity, file, line, msg) BOOST_LOG_SEV(::dr::dr_logger::get(), severity) << msg;
 

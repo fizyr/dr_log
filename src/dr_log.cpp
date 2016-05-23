@@ -18,7 +18,7 @@
 
 namespace dr {
 
-BOOST_LOG_GLOBAL_LOGGER_DEFAULT(dr_logger, Logger);
+BOOST_LOG_GLOBAL_LOGGER_DEFAULT(dr_logger, Logger)
 
 namespace {
 	namespace log      = boost::log;
