@@ -2,7 +2,7 @@
 <package format="2">
 	<name>dr_log</name>
 	<version>1.0.0</version>
-	<description>Common log4cxx configuration for Delft Robotics packages.</description>
+	<description>Alternative logging macros for Delft Robotics packages.</description>
 	<license>Apache v2.0</license>
 
 	<maintainer email="maarten@de-vri.es">Maarten de Vries</maintainer>
