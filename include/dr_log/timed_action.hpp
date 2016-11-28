@@ -1,9 +1,10 @@
 #pragma once
-
 #include <boost/optional.hpp>
 
 #include <chrono>
 #include <utility>
+
+namespace dr {
 
 template<typename T>
 class TimedAction {
@@ -17,22 +18,24 @@ class TimedAction {
 	std::string reason_;
 
 public:
-	void start() {
+	void startTimer() {
 		start_ = Clock::now();
 	}
 
 	template<typename Y>
 	void success(Y && value) {
+		end_   = Clock::now();
 		value_ = std::forward<Y>(value);
 	}
 
 	void failure(std::string reason) {
+		end_    = Clock::now();
 		reason_ = std::move(reason);
 	}
 
-	boost::optional<T> const & value() const {
-		return value_;
-	}
+
+	boost::optional<T> const & value() const { return value_; }
+	boost::optional<T>       & value()       { return value_; }
 
 	bool succeeded() const {
 		return !!value_;
@@ -46,6 +49,12 @@ public:
 		return succeeded();
 	}
 
+	TimePoint       & start()       { return start_; }
+	TimePoint const & start() const { return start_; }
+
+	TimePoint       & end()       { return end_; }
+	TimePoint const & end() const { return end_; }
+
 	Duration duration() const {
 		return end_ - start_;
 	}
@@ -55,3 +64,5 @@ public:
 		return end_ - other.start_;
 	}
 };
+
+}

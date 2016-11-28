@@ -5,13 +5,14 @@ find_package(catkin REQUIRED COMPONENTS
 	dr_cmake
 )
 
-find_package(Boost REQUIRED COMPONENTS log log_setup system date_time thread)
+find_package(Boost REQUIRED COMPONENTS log log_setup system date_time thread serialization)
 find_package(log4cxx REQUIRED)
 find_package(PThread REQUIRED)
 
 catkin_package(
-	INCLUDE_DIRS include ${Boost_INCLUDE_DIRS}
-	LIBRARIES ${PROJECT_NAME} ${Boost_LIBRARIES}
+	INCLUDE_DIRS include
+	LIBRARIES ${PROJECT_NAME}
+	DEPENDS Boost log4cxx
 )
 
 dr_include_directories(
