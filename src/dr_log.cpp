@@ -133,7 +133,7 @@ namespace {
 		mapping[LogLevel::error]    = log::sinks::syslog::error;
 		mapping[LogLevel::fatal]    = log::sinks::syslog::critical;
 		return mapping;
-	};
+	}
 
 	// Text format for file and console log.
 	auto text_format = log::expressions::stream

@@ -1,21 +1,28 @@
 cmake_minimum_required(VERSION 3.8)
 project(dr_log)
 
-find_package(catkin REQUIRED COMPONENTS
-	dr_cmake
-)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+add_compile_options(-Wall -Wextra -Wpedantic)
+
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
+
+find_package(catkin REQUIRED COMPONENTS)
 
 find_package(Boost REQUIRED COMPONENTS log log_setup system date_time thread)
 find_package(log4cxx REQUIRED)
-find_package(PThread REQUIRED)
+
+set(CMAKE_THREAD_PREFER_PTHREAD ON)
+find_package(Threads)
 
 catkin_package(
 	INCLUDE_DIRS include ${Boost_INCLUDE_DIRS}
 	LIBRARIES ${PROJECT_NAME} ${Boost_LIBRARIES}
 )
 
-dr_include_directories(
-	include/${PROJECT_NAME}
+include_directories(include/${PROJECT_NAME})
+include_directories(SYSTEM
 	${catkin_INCLUDE_DIRS}
 	${Boost_INCLUDE_DIRS}
 	${log4cxx_INCLUDE_DIRS}
@@ -28,11 +35,8 @@ add_library(${PROJECT_NAME}
 
 add_executable(${PROJECT_NAME}_test src/test.cpp)
 
-target_compile_options(${PROJECT_NAME}      PUBLIC ${PThread_COMPILE_OPTIONS})
-target_compile_options(${PROJECT_NAME}_test PUBLIC ${PThread_COMPILE_OPTIONS})
-
-target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${Boost_LIBRARIES} ${PThread_LIBRARIES} ${log4cxx_LIBRARIES})
-target_link_libraries(${PROJECT_NAME}_test ${PROJECT_NAME} ${PThread_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${Boost_LIBRARIES} Threads::Threads ${log4cxx_LIBRARIES})
+target_link_libraries(${PROJECT_NAME}_test ${PROJECT_NAME} Threads::Threads)
 
 install(
 	TARGETS "${PROJECT_NAME}"
