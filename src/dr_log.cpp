@@ -224,9 +224,13 @@ void setupLogging(std::string const & log_file, std::string const & name) {
 	log::add_common_attributes();
 	core->add_global_attribute("Node", log::attributes::constant<std::string>(name));
 
-	// Add  sinks.
-	core->add_sink(createConsoleSink());
-	core->add_sink(createSyslogSink());
+	// Get environment variables to check if we should skip some sinks.
+	char * use_console_sink = std::getenv("DR_LOG_USE_CONSOLE");
+	char * use_syslog_sink  = std::getenv("DR_LOG_USE_SYSLOG");
+
+	// Add sinks.
+	if (!use_console_sink || std::atoi(use_console_sink)) core->add_sink(createConsoleSink());
+	if (!use_syslog_sink  || std::atoi(use_syslog_sink))  core->add_sink(createSyslogSink());
 	if (!log_file.empty()) core->add_sink(createFileSink(log_file));
 
 	// Capture log4cxx output too.
