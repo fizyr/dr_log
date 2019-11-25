@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
 <package format="2">
 	<name>dr_log</name>
-	<version>0.1.1</version>
-	<description>Alternative logging macros for Delft Robotics packages.</description>
+	<version>0.1.2</version>
+	<description>Alternative logging macros for Fizyr packages.</description>
 	<license>Apache v2.0</license>
 
-	<maintainer email="maarten@de-vri.es">Maarten de Vries</maintainer>
+	<maintainer email="h.gaiser@fizyr.com">Hans Gaiser</maintainer>
 	<author email="maarten@de-vri.es">Maarten de Vries</author>
 
 	<buildtool_depend>catkin</buildtool_depend>
