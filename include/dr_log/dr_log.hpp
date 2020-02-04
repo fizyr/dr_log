@@ -2,8 +2,13 @@
 #include <chrono>
 #include <string>
 
+#ifndef BOOST_LOG_USE_NATIVE_SYSLOG
 #define BOOST_LOG_USE_NATIVE_SYSLOG
+#endif
+
+#ifndef BOOST_LOG_DYN_LINK
 #define BOOST_LOG_DYN_LINK
+#endif
 
 #include <boost/log/common.hpp>
 #include <boost/log/sources/severity_logger.hpp>
