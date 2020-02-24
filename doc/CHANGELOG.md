@@ -10,3 +10,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 ### Changed
 
 ### Removed
+
+## 0.1.3 - 2020-02-24
+### Added
+- Add environment flags for disabling syslog and console outputs (`DR_LOG_USE_SYSLOG` and `DR_LOG_USE_CONSOLE`).
+
+### Changed
+
+### Removed
