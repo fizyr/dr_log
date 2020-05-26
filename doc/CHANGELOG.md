@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 ## master -
 ### Changed
 - Make ROS integration with log4cxx optional.
+- Link with --as-needed.
 
 ## 0.1.3 - 2020-02-24
 ### Added
