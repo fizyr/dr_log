@@ -212,6 +212,10 @@ std::ostream & operator<< (std::ostream & stream, LogLevel level) {
 	return stream;
 }
 
+#ifdef DR_LOG_USE_LOG4CXX
+void registerLog4cxxAppenders();
+#endif
+
 void setupLogging(std::string const & log_file, std::string const & name) {
 	if (logging_initialized.test_and_set()) {
 		DR_ERROR("dr::setupLogging() called while logging has already been initialized.");
@@ -233,8 +237,10 @@ void setupLogging(std::string const & log_file, std::string const & name) {
 	if (!use_syslog_sink  || std::atoi(use_syslog_sink))  core->add_sink(createSyslogSink());
 	if (!log_file.empty()) core->add_sink(createFileSink(log_file));
 
+#ifdef DR_LOG_USE_LOG4CXX
 	// Capture log4cxx output too.
 	registerLog4cxxAppenders();
+#endif
 }
 
 }

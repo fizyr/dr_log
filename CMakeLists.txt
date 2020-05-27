@@ -5,13 +5,15 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 add_compile_options(-Wall -Wextra -Wpedantic)
+add_link_options(LINKER:--as-needed)
+
+set(CACHE DR_LOG_USE_LOG4CXX BOOL OFF "Use log4cxx to intercept log messages from ROS")
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 
 find_package(catkin REQUIRED COMPONENTS)
 
 find_package(Boost REQUIRED COMPONENTS log log_setup system date_time thread)
-find_package(log4cxx REQUIRED)
 
 set(CMAKE_THREAD_PREFER_PTHREAD ON)
 find_package(Threads)
@@ -25,12 +27,19 @@ include_directories(include/${PROJECT_NAME})
 include_directories(SYSTEM
 	${catkin_INCLUDE_DIRS}
 	${Boost_INCLUDE_DIRS}
-	${log4cxx_INCLUDE_DIRS}
 )
 
-add_library(${PROJECT_NAME}
+set(log4cxx_source_files "")
+if (DR_LOG_USE_LOG4CXX)
+	find_package(log4cxx REQUIRED)
+	include_directories(SYSTEM log4cxx_INCLUDE_DIRS)
+	list(APPEND log4cxx_source_files src/log4cxx.cpp)
+	add_definitions(-DDR_LOG_USE_LOG4CXX)
+endif()
+
+add_library(${PROJECT_NAME} ${log4cxx_source_files}
 	src/dr_log.cpp
-	src/log4cxx.cpp
+	${log4cxx_source_files}
 )
 
 add_executable(${PROJECT_NAME}_test src/test.cpp)

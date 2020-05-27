@@ -70,6 +70,4 @@ void setupLogging(
 	std::string const & name      ///< The name of the program or node for logging purposes.
 );
 
-void registerLog4cxxAppenders();
-
 }
