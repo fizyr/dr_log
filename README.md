@@ -14,6 +14,16 @@ By default, `dr_log` uses 2 sinks:
 The `syslog` sink can be disabled by setting the `DR_LOG_USE_SYSLOG` environment variable to `0`.
 The `console` sink can be disabled by setting the `DR_LOG_USE_CONSOLE` environment variable to `0`.
 
+## Systemd
+
+`dr_log` has a Systemd logging mode. This logging mode just logs to the console,
+but without colors and timestamps, and with log-level prefixed in a way that systemd parses 
+when `SyslogLevelPrefix=` is enabled.
+
+This mode can be enabled by setting the `DR_LOG_USE_SYSTEMD` envrivonment variable to `1`.
+Since `DR_LOG_USE_CONSOLE` and `DR_LOG_USE_SYSTEMD` can't be active at the same time,
+it is necessary to set the `DR_LOG_USE_CONSOLE` environment variable to `0` as well.
+
 ## Example
 
 ```c++
