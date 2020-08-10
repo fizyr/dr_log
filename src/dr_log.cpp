@@ -271,10 +271,12 @@ void setupLogging(std::string const & log_file, std::string const & name) {
 	// Get environment variables to check if we should skip some sinks.
 	char * use_console_sink   = std::getenv("DR_LOG_USE_CONSOLE");
 	char * use_syslog_sink    = std::getenv("DR_LOG_USE_SYSLOG");
-	char * use_systemd_sink   = std::getenv("DR_LOG_USE_SYSTEMD");
-	bool console_sink_enabled = (!use_console_sink || std::atoi(use_console_sink));
+	char * console_format    = std::getenv("DR_LOG_CONSOLE_FORMAT");
+
+	bool console_sink_enabled = ((!use_console_sink || std::atoi(use_console_sink)) && (!console_format || (strcmp("systemd", console_format) != 0)));
 	bool syslog_sink_enabled  = (!use_syslog_sink  || std::atoi(use_syslog_sink));
-	bool systemd_sink_enabled = !console_sink_enabled && (!use_systemd_sink  || std::atoi(use_systemd_sink));   // Only add systemd sink if console sink disabled
+	bool systemd_sink_enabled = ((!use_console_sink || std::atoi(use_console_sink)) && (!console_format || (strcmp("systemd", console_format) == 0)));
+
 
 	// Add sinks.
 	if (console_sink_enabled) core->add_sink(createConsoleSink());

@@ -16,13 +16,11 @@ The `console` sink can be disabled by setting the `DR_LOG_USE_CONSOLE` environme
 
 ## Systemd
 
-`dr_log` has a Systemd logging mode. This logging mode just logs to the console,
-but without colors and timestamps, and with log-level prefixed in a way that systemd parses 
-when `SyslogLevelPrefix=` is enabled.
+`dr_log` has a Systemd logging mode. This allows for console logging without colors and timestamps,
+and with log-level prefixed in a way that systemd parses when `SyslogLevelPrefix=` is enabled.
 
-This mode can be enabled by setting the `DR_LOG_USE_SYSTEMD` envrivonment variable to `1`.
-Since `DR_LOG_USE_CONSOLE` and `DR_LOG_USE_SYSTEMD` can't be active at the same time,
-it is necessary to set the `DR_LOG_USE_CONSOLE` environment variable to `0` as well.
+This mode can be enabled by setting the `DR_LOG_CONSOLE_FORMAT` environment variable to `systemd`.
+This only works with the 'console' sink enabled.
 
 ## Example
 
