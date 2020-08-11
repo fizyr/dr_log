@@ -256,7 +256,14 @@ std::ostream & operator<< (std::ostream & stream, LogLevel level) {
 void registerLog4cxxAppenders();
 #endif
 
+std::string getEnv(const char* env) {
+	if (char* env_val = std::getenv(env))
+		return env_val;
+	return "";
+}
+
 void setupLogging(std::string const & log_file, std::string const & name) {
+
 	if (logging_initialized.test_and_set()) {
 		DR_ERROR("dr::setupLogging() called while logging has already been initialized.");
 		return;
@@ -268,15 +275,10 @@ void setupLogging(std::string const & log_file, std::string const & name) {
 	log::add_common_attributes();
 	core->add_global_attribute("Node", log::attributes::constant<std::string>(name));
 
-	// Get environment variables to check if we should skip some sinks.
-	char * use_console_sink   = std::getenv("DR_LOG_USE_CONSOLE");
-	char * use_syslog_sink    = std::getenv("DR_LOG_USE_SYSLOG");
-	char * console_format    = std::getenv("DR_LOG_CONSOLE_FORMAT");
-
-	bool console_sink_enabled = ((!use_console_sink || std::atoi(use_console_sink)) && (!console_format || (strcmp("systemd", console_format) != 0)));
-	bool syslog_sink_enabled  = (!use_syslog_sink  || std::atoi(use_syslog_sink));
-	bool systemd_sink_enabled = ((!use_console_sink || std::atoi(use_console_sink)) && (!console_format || (strcmp("systemd", console_format) == 0)));
-
+	// Get environment variables to check which sinks to enable
+	bool console_sink_enabled = ((getEnv("DR_LOG_USE_CONSOLE") != "0") && (getEnv("DR_LOG_CONSOLE_FORMAT") != "systemd"));
+	bool systemd_sink_enabled = ((getEnv("DR_LOG_USE_CONSOLE") != "0") && (getEnv("DR_LOG_CONSOLE_FORMAT") == "systemd"));
+	bool syslog_sink_enabled  = (getEnv("DR_LOG_USE_SYSLOG") != "0");
 
 	// Add sinks.
 	if (console_sink_enabled) core->add_sink(createConsoleSink());
