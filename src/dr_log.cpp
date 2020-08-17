@@ -276,9 +276,12 @@ void setupLogging(std::string const & log_file, std::string const & name) {
 	core->add_global_attribute("Node", log::attributes::constant<std::string>(name));
 
 	// Get environment variables to check which sinks to enable
-	bool console_sink_enabled = ((getEnv("DR_LOG_USE_CONSOLE") != "0") && (getEnv("DR_LOG_CONSOLE_FORMAT") != "systemd"));
-	bool systemd_sink_enabled = ((getEnv("DR_LOG_USE_CONSOLE") != "0") && (getEnv("DR_LOG_CONSOLE_FORMAT") == "systemd"));
-	bool syslog_sink_enabled  = (getEnv("DR_LOG_USE_SYSLOG") != "0");
+	std::string env_use_console     = getEnv("DR_LOG_USE_CONSOLE");
+	std::string env_console_format  = getEnv("DR_LOG_CONSOLE_FORMAT");
+	std::string env_use_syslog      = getEnv("DR_LOG_USE_SYSLOG");
+	bool console_sink_enabled       = ((env_use_console != "0") && (env_console_format != "systemd"));
+	bool systemd_sink_enabled       = ((env_use_console != "0") && (env_console_format == "systemd"));
+	bool syslog_sink_enabled        = (env_use_syslog != "0");
 
 	// Add sinks.
 	if (console_sink_enabled) core->add_sink(createConsoleSink());
