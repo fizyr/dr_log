@@ -15,8 +15,6 @@ find_package(catkin REQUIRED COMPONENTS)
 
 find_package(Boost REQUIRED COMPONENTS log log_setup system date_time thread)
 
-find_package(systemd REQUIRED)
-
 set(CMAKE_THREAD_PREFER_PTHREAD ON)
 find_package(Threads)
 

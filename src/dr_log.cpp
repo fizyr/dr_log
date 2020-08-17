@@ -15,7 +15,16 @@
 #include <type_traits>
 #include <iomanip>
 #include <atomic>
-#include <systemd/sd-daemon.h>
+
+// systemd sd-daemon.h constants
+#define SD_EMERG   "<0>"  /* system is unusable */
+#define SD_ALERT   "<1>"  /* action must be taken immediately */
+#define SD_CRIT    "<2>"  /* critical conditions */
+#define SD_ERR     "<3>"  /* error conditions */
+#define SD_WARNING "<4>"  /* warning conditions */
+#define SD_NOTICE  "<5>"  /* normal but significant condition */
+#define SD_INFO    "<6>"  /* informational */
+#define SD_DEBUG   "<7>"  /* debug-level messages */
 
 namespace dr {
 
