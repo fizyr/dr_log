@@ -16,6 +16,16 @@
 #include <iomanip>
 #include <atomic>
 
+// systemd sd-daemon.h constants
+#define SD_EMERG   "<0>"  /* system is unusable */
+#define SD_ALERT   "<1>"  /* action must be taken immediately */
+#define SD_CRIT    "<2>"  /* critical conditions */
+#define SD_ERR     "<3>"  /* error conditions */
+#define SD_WARNING "<4>"  /* warning conditions */
+#define SD_NOTICE  "<5>"  /* normal but significant condition */
+#define SD_INFO    "<6>"  /* informational */
+#define SD_DEBUG   "<7>"  /* debug-level messages */
+
 namespace dr {
 
 BOOST_LOG_GLOBAL_LOGGER_DEFAULT(dr_logger, Logger)
@@ -46,7 +56,7 @@ namespace {
 	/// Tag for formatting severyity level in log output.
 	struct LevelTag;
 
-	/// Format a severity level for log output.
+	/// Format a severity level into single char for log output.
 	boost::log::formatting_ostream & operator<< (boost::log::formatting_ostream & stream,  log::to_log_manip<LogLevel, LevelTag> const & level) {
 		static char const * strings[] = {
 			"D",
@@ -62,6 +72,30 @@ namespace {
 			stream << strings[numeric];
 		} else {
 			stream << "?";
+		}
+
+		return stream;
+	}
+
+	/// Tag for giving syslog severity level in log output
+	struct SystemdSeverityTag;
+
+	/// Format a severity level into systemd severity level for log output.
+	boost::log::formatting_ostream & operator<< (boost::log::formatting_ostream & stream,  log::to_log_manip<LogLevel, SystemdSeverityTag> const & level) {
+		static char const * strings[] = {
+				SD_DEBUG,
+				SD_INFO,
+				SD_INFO,
+				SD_WARNING,
+				SD_ERR,
+				SD_CRIT,
+		};
+
+		std::size_t numeric = int(level.get());
+		if (numeric < sizeof(strings) / sizeof(strings[0])) {
+			stream << strings[numeric];
+		} else {
+			stream << "<?>";
 		}
 
 		return stream;
@@ -117,12 +151,6 @@ namespace {
 
 	};
 
-	/// Create an AnsiColorFormatter with a slave formatter.
-	template<typename Slave>
-	AnsiColorFormatter<typename std::decay<Slave>::type> makeAnsiColorFormatter(Slave && slave) {
-		return AnsiColorFormatter<typename std::decay<Slave>::type>(std::forward<Slave>(slave));
-	}
-
 	/// Get a syslog severity mapper for dr::LogLevel.
 	log::sinks::syslog::custom_severity_mapping<LogLevel> severityMapping(std::string const & attribute_name = "Severity") {
 		log::sinks::syslog::custom_severity_mapping<LogLevel> mapping(attribute_name);
@@ -135,6 +163,12 @@ namespace {
 		return mapping;
 	}
 
+	/// Create an AnsiColorFormatter with a slave formatter.
+	template<typename Slave>
+	AnsiColorFormatter<typename std::decay<Slave>::type> makeAnsiColorFormatter(Slave && slave) {
+		return AnsiColorFormatter<typename std::decay<Slave>::type>(std::forward<Slave>(slave));
+	}
+
 	// Text format for file and console log.
 	auto text_format = log::expressions::stream
 		<< "[" << log::expressions::format_date_time<boost::posix_time::ptime>("TimeStamp", "%Y-%m-%d %H:%M:%S.%f") << "] "
@@ -142,12 +176,27 @@ namespace {
 		<< "[" << log::expressions::attr<std::string>("Node") << "] "
 		<< log::expressions::message;
 
+	auto systemd_format = log::expressions::stream
+			<< log::expressions::attr<LogLevel, SystemdSeverityTag>("Severity") << " "
+			<< log::expressions::message;
+
 	// Create a console sink.
 	boost::shared_ptr<log::sinks::synchronous_sink<log::sinks::basic_text_ostream_backend<char>>> createConsoleSink() {
 		auto backend = boost::make_shared<log::sinks::text_ostream_backend>();
 		backend->add_stream(boost::shared_ptr<std::ostream>(&std::clog, NullDeleter()));
 		auto frontend = boost::make_shared<log::sinks::synchronous_sink<log::sinks::text_ostream_backend>>(backend);
 		frontend->set_formatter(makeAnsiColorFormatter(text_format));
+		return frontend;
+	}
+
+	// Create a systemd sink.
+	boost::shared_ptr<log::sinks::synchronous_sink<log::sinks::basic_text_ostream_backend<char>>> createSystemdSink() {
+		auto backend = boost::make_shared<log::sinks::text_ostream_backend>();
+		backend->add_stream(boost::shared_ptr<std::ostream>(&std::clog, NullDeleter()));
+
+		auto frontend = boost::make_shared<log::sinks::synchronous_sink<log::sinks::text_ostream_backend>>(backend);
+		frontend->set_formatter(systemd_format);
+
 		return frontend;
 	}
 
@@ -216,7 +265,14 @@ std::ostream & operator<< (std::ostream & stream, LogLevel level) {
 void registerLog4cxxAppenders();
 #endif
 
+std::string getEnv(const char* env) {
+	if (char* env_val = std::getenv(env))
+		return env_val;
+	return "";
+}
+
 void setupLogging(std::string const & log_file, std::string const & name) {
+
 	if (logging_initialized.test_and_set()) {
 		DR_ERROR("dr::setupLogging() called while logging has already been initialized.");
 		return;
@@ -228,14 +284,19 @@ void setupLogging(std::string const & log_file, std::string const & name) {
 	log::add_common_attributes();
 	core->add_global_attribute("Node", log::attributes::constant<std::string>(name));
 
-	// Get environment variables to check if we should skip some sinks.
-	char * use_console_sink = std::getenv("DR_LOG_USE_CONSOLE");
-	char * use_syslog_sink  = std::getenv("DR_LOG_USE_SYSLOG");
+	// Get environment variables to check which sinks to enable
+	std::string env_use_console     = getEnv("DR_LOG_USE_CONSOLE");
+	std::string env_console_format  = getEnv("DR_LOG_CONSOLE_FORMAT");
+	std::string env_use_syslog      = getEnv("DR_LOG_USE_SYSLOG");
+	bool console_sink_enabled       = ((env_use_console != "0") && (env_console_format != "systemd"));
+	bool systemd_sink_enabled       = ((env_use_console != "0") && (env_console_format == "systemd"));
+	bool syslog_sink_enabled        = (env_use_syslog != "0");
 
 	// Add sinks.
-	if (!use_console_sink || std::atoi(use_console_sink)) core->add_sink(createConsoleSink());
-	if (!use_syslog_sink  || std::atoi(use_syslog_sink))  core->add_sink(createSyslogSink());
-	if (!log_file.empty()) core->add_sink(createFileSink(log_file));
+	if (console_sink_enabled) core->add_sink(createConsoleSink());
+	if (syslog_sink_enabled)  core->add_sink(createSyslogSink());
+	if (systemd_sink_enabled) core->add_sink(createSystemdSink());
+	if (!log_file.empty())    core->add_sink(createFileSink(log_file));
 
 #ifdef DR_LOG_USE_LOG4CXX
 	// Capture log4cxx output too.
