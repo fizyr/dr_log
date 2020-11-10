@@ -184,6 +184,7 @@ namespace {
 	boost::shared_ptr<log::sinks::synchronous_sink<log::sinks::basic_text_ostream_backend<char>>> createConsoleSink() {
 		auto backend = boost::make_shared<log::sinks::text_ostream_backend>();
 		backend->add_stream(boost::shared_ptr<std::ostream>(&std::clog, NullDeleter()));
+		backend->auto_flush(true);
 		auto frontend = boost::make_shared<log::sinks::synchronous_sink<log::sinks::text_ostream_backend>>(backend);
 		frontend->set_formatter(makeAnsiColorFormatter(text_format));
 		return frontend;
@@ -193,6 +194,7 @@ namespace {
 	boost::shared_ptr<log::sinks::synchronous_sink<log::sinks::basic_text_ostream_backend<char>>> createSystemdSink() {
 		auto backend = boost::make_shared<log::sinks::text_ostream_backend>();
 		backend->add_stream(boost::shared_ptr<std::ostream>(&std::clog, NullDeleter()));
+		backend->auto_flush(true);
 
 		auto frontend = boost::make_shared<log::sinks::synchronous_sink<log::sinks::text_ostream_backend>>(backend);
 		frontend->set_formatter(systemd_format);
