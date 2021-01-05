@@ -37,7 +37,7 @@ if (DR_LOG_USE_LOG4CXX)
 	add_definitions(-DDR_LOG_USE_LOG4CXX)
 endif()
 
-add_library(${PROJECT_NAME} ${log4cxx_source_files}
+add_library(${PROJECT_NAME}
 	src/dr_log.cpp
 	${log4cxx_source_files}
 )
