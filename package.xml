@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package format="2">
 	<name>dr_log</name>
-	<version>0.3.3</version>
+	<version>0.4.0</version>
 	<description>Alternative logging macros for Fizyr packages.</description>
 	<license>Apache v2.0</license>
 
