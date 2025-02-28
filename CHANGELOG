@@ -1,0 +1,2 @@
+# Unreleased
+- [fix][patch] Explicitly include boost::weak_ptr.
