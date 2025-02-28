@@ -10,6 +10,7 @@
 #include <boost/log/support/date_time.hpp>
 #include <boost/log/utility/exception_handler.hpp>
 #include <boost/log/attributes/value_extraction.hpp>
+#include <boost/weak_ptr.hpp>
 
 #include <utility>
 #include <type_traits>
