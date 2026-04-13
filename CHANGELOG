@@ -1,2 +1,5 @@
+# Version 0.4.2 - TBD
+- [fix][patch] Build fix for boost version 1.90.
+
 # Version 0.4.1 - 2025-02-28
 - [fix][patch] Explicitly include boost::weak_ptr.
