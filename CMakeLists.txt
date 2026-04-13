@@ -9,7 +9,7 @@ add_link_options(LINKER:--as-needed)
 
 find_package(catkin REQUIRED COMPONENTS)
 
-find_package(Boost REQUIRED COMPONENTS log log_setup system date_time thread)
+find_package(Boost REQUIRED COMPONENTS log log_setup date_time thread)
 
 set(CMAKE_THREAD_PREFER_PTHREAD ON)
 find_package(Threads)
