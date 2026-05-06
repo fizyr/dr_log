@@ -1,5 +1,27 @@
-# Version 0.4.2 - TBD
-- [fix][patch] Build fix for boost version 1.90.
+# Version 0.4.2 - 2026-05-06
+- [fix][patch] Build fix for boost version 1.89.
 
 # Version 0.4.1 - 2025-02-28
 - [fix][patch] Explicitly include boost::weak_ptr.
+
+# Version 0.4.0 - 2021-09-14
+- [major][remove] Removed optional ROS/log4cxx support.
+
+# Version 0.3.3 - 2021-06-29
+- [minor][fix] Added dependency on Boost.
+
+# Version 0.3.2 - 2021-03-08
+- [minor][fix] Removed duplicate source file.
+
+# Version 0.3.1 - 2020-11-10
+- [minor][fix] Prevent output buffering from delaying log messages when stderr is redirected.
+
+# Version 0.3.0 - 2020-11-02
+- [minor][add] Systemd logging mode.
+
+# Version 0.2.0 - 2020-05-29
+- [major][change] Make ROS integration with log4cxx optional.
+- [minor][change] Link with --as-needed.
+
+# Version 0.1.3 - 2020-02-24
+- [minor][add] Add environment flags for disabling syslog and console outputs (`DR_LOG_USE_SYSLOG` and `DR_LOG_USE_CONSOLE`).
